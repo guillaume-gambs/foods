@@ -44,6 +44,31 @@
             background-color: #45a049;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #4CAF50;
+            color: white;
+        }
         .rating-0 {
              background-color: #0000008d; /* Black */
         }
@@ -94,7 +119,7 @@
 <body>
     <div id="tagContainer"></div>
     <input type="text" id="searchInput" onkeyup="search()" placeholder="Search rating for foods..">
-    <ul id="foodList">
+    <table id="foodTable"></table>
     </ul>
 
     <script>
@@ -144,15 +169,25 @@
         }
 
         function displayFoods(foods) {
-            const ul = document.getElementById('foodList');
-            ul.innerHTML = '';
+            const table = document.getElementById('foodTable');
+            table.innerHTML = '';
             foods.forEach(food => {
-                const li = document.createElement('li');
-                const emoji = getEmoji(food.rating);
-                li.innerHTML = `${emoji} ${food.category} ${food.name}`;
-                li.className = `rating-${food.rating}`;
+                const tr = document.createElement('tr');
+                const emojiTd = document.createElement('td');
+                const categoryTd = document.createElement('td');
+                const nameTd = document.createElement('td');
 
-                ul.appendChild(li);
+                const emoji = getEmoji(food.rating);
+                emojiTd.innerHTML = emoji;
+                categoryTd.textContent = food.category;
+                nameTd.textContent = food.name;
+
+                tr.appendChild(emojiTd);
+                tr.appendChild(categoryTd);
+                tr.appendChild(nameTd);
+                tr.className = `rating-${food.rating}`;
+
+                table.appendChild(tr);
             });
         }
 
