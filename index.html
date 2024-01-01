@@ -122,6 +122,8 @@
 
         function getEmoji(rating) {
             switch (rating) {
+                case -2:
+                    return '???' ; // Not Set Yet
                 case -1:
                     return '??' ; // Je ne sais pas
                 case 0:
@@ -147,7 +149,7 @@
             foods.forEach(food => {
                 const li = document.createElement('li');
                 const emoji = getEmoji(food.rating);
-                li.innerHTML = `${emoji} ${food.name}`;
+                li.innerHTML = `${emoji} ${food.category} ${food.name}`;
                 li.className = `rating-${food.rating}`;
 
                 ul.appendChild(li);
