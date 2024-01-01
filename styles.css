@@ -1,0 +1,111 @@
+#searchInput {
+    width: 95%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 5px solid #ccc;
+    border-radius: 40px;
+}
+
+#foodList {
+    list-style-type: none;
+    padding: 1;
+    width: 90%;
+}
+
+#foodList li {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+}
+
+#foodList li:last-child {
+    border-bottom: none;
+}
+#foodList button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+#foodList button:hover {
+    background-color: #45a049;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+.rating-0 {
+     background-color: #0000008d; /* Black */
+}
+.rating-1 {
+     background-color: #ffcccc; /* Red */
+}
+
+.rating-2 {
+    background-color: #ffddcc; /* Orange */
+}
+
+.rating-3 {
+    background-color: #ffffcc; /* Yellow */
+}
+
+.rating-4 {
+    background-color: #ddffcc; /* Light Green */
+}
+
+.rating-5 {
+    background-color: #ccffcc; /* Green */
+}
+#tagContainer {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+#tagContainer .tag {
+    background-color: #f1f1f1;
+    border: none;
+    color: black;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+#tagContainer .tag:hover {
+    background-color: #3e8e41;
+    color: white;
+}
