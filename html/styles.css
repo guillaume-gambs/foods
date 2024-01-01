@@ -13,14 +13,6 @@
     width: 90%;
 }
 
-#foodList li {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
-}
-
-#foodList li:last-child {
-    border-bottom: none;
-}
 #foodList button {
     margin-left: 10px;
     padding: 5px 10px;
@@ -86,6 +78,7 @@ th {
 .rating-5 {
     background-color: #ccffcc; /* Green */
 }
+
 #tagContainer {
     display: flex;
     flex-wrap: wrap;
@@ -107,5 +100,10 @@ th {
 
 #tagContainer .tag:hover {
     background-color: #3e8e41;
+    color: white;
+}
+
+#tagContainer .tag.selected {
+    background-color: #244a7c;
     color: white;
 }
