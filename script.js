@@ -1,5 +1,6 @@
 
 let foods = [];
+let filters = [];
 
 fetch('foods.json')
     .then(response => response.json())
@@ -16,10 +17,27 @@ function removeAccents(str) {
 
 function search() {
     const input = removeAccents(document.getElementById('searchInput').value.toLowerCase());
-    const filteredFoods = foods.filter(food => removeAccents(food.name.toLowerCase()).includes(input));
-
+    const filteredFoods = foods.filter(food => {
+        const foodCategory = removeAccents(food.category.toLowerCase());
+        return (filters.length === 0 || filters.includes(foodCategory)) && removeAccents(food.name.toLowerCase()).includes(input);
+    });
     displayFoods(filteredFoods);
 }
+
+
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    filters = urlParams.get('filters') ? urlParams.get('filters').split(',') : [];
+    // Mettez à jour l'interface utilisateur tag.classList selon les filtres
+    const tags = document.getElementsByClassName('tag');
+    for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        if (filters.includes(tag.textContent)) {
+            tag.classList.add('selected');
+        }
+    }
+    search();
+};
 
 function getEmoji(rating) {
     switch (rating) {
@@ -28,7 +46,7 @@ function getEmoji(rating) {
         case -1:
             return '??' ; // Je ne sais pas
         case 0:
-            return "&#128513;"; // Fear
+            return "&#128561;"; // Fear
         case 1:
             return '&#x1F92E;'; // Vomit
         case 2:
@@ -47,6 +65,22 @@ function getEmoji(rating) {
 function displayFoods(foods) {
     const table = document.getElementById('foodTable');
     table.innerHTML = '';
+
+    // Créer l'en-tête du tableau
+    const header = document.createElement('tr');
+    const emojiTh = document.createElement('th');
+    const categoryTh = document.createElement('th');
+    const nameTh = document.createElement('th');
+
+    emojiTh.textContent = 'Emoji';
+    categoryTh.textContent = 'Category';
+    nameTh.textContent = 'Name';
+
+    header.appendChild(emojiTh);
+    header.appendChild(categoryTh);
+    header.appendChild(nameTh);
+    table.appendChild(header);
+
     foods.forEach(food => {
         const tr = document.createElement('tr');
         const emojiTd = document.createElement('td');
@@ -75,8 +109,15 @@ function displayTags(categories) {
         tag.textContent = category;
         tag.className = 'tag';
         tag.onclick = function() {
-            document.getElementById('searchInput').value = category;
+            if (filters.includes(category)) {
+                filters = filters.filter(filter => filter !== category);
+                tag.classList.remove('selected');
+            } else {
+                filters.push(category);
+                tag.classList.add('selected');
+            }
             search();
+            window.history.pushState(null, '', '?filters=' + filters.join(','));
         };
         container.appendChild(tag);
     });
