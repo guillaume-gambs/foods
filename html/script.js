@@ -47,6 +47,22 @@ function getEmoji(rating) {
 function displayFoods(foods) {
     const table = document.getElementById('foodTable');
     table.innerHTML = '';
+
+    // Créer l'en-tête du tableau
+    const header = document.createElement('tr');
+    const emojiTh = document.createElement('th');
+    const categoryTh = document.createElement('th');
+    const nameTh = document.createElement('th');
+
+    emojiTh.textContent = 'Emoji';
+    categoryTh.textContent = 'Category';
+    nameTh.textContent = 'Name';
+
+    header.appendChild(emojiTh);
+    header.appendChild(categoryTh);
+    header.appendChild(nameTh);
+    table.appendChild(header);
+    
     foods.forEach(food => {
         const tr = document.createElement('tr');
         const emojiTd = document.createElement('td');
