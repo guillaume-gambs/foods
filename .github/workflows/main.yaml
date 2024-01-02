@@ -21,7 +21,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./html # Replace with your build output directory
           publish_branch: gh-pages
+          cname: foods.gambs.eu
+          enable_jekyll: false
 
-      - name: Create CNAME
-        run: |
-          echo "foods.gambs.eu "> ./public/CNAME
