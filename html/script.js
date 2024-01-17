@@ -7,7 +7,9 @@ fetch('foods.json')
     .then(data => {
         foods = data;
         const categories = [...new Set(foods.map(food => food.category))];
-        displayTags(categories);
+        const rates = [...new Set(foods.map(food => food.rating))];
+        displayCategory(categories);
+        displayRate(rates);
         displayFoods(foods);
     });
 
@@ -19,11 +21,37 @@ function search() {
     const input = removeAccents(document.getElementById('searchInput').value.toLowerCase());
     const filteredFoods = foods.filter(food => {
         const foodCategory = removeAccents(food.category.toLowerCase());
-        return (filters.length === 0 || filters.includes(foodCategory)) && removeAccents(food.name.toLowerCase()).includes(input);
+        const foodRating = food.rating;
+        const foodName = removeAccents(food.name.toLowerCase());
+        return (
+            (filters.length === 0 || filters.includes(foodCategory)) &&
+            (foodCategory.includes(input) || foodRating.toString().includes(input) || foodName.includes(input))
+        );
     });
     displayFoods(filteredFoods);
 }
 
+function searchAdvance(column, input) {
+    input = removeAccents(input.toLowerCase());
+    const filteredFoods = foods.filter(food => {
+        let value;
+        switch (column) {
+            case 'name':
+                value = removeAccents(food.name.toLowerCase());
+                break;
+            case 'rating':
+                value = food.rating.toString();
+                break;
+            case 'category':
+                value = removeAccents(food.category.toLowerCase());
+                break;
+            default:
+                return false;
+        }
+        return value.includes(input);
+    });
+    displayFoods(filteredFoods);
+}
 
 window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -101,8 +129,8 @@ function displayFoods(foods) {
     });
 }
 
-function displayTags(categories) {
-    const container = document.getElementById('tagContainer');
+function displayCategory(categories) {
+    const container = document.getElementById('tagCategory');
     container.innerHTML = '';
     categories.forEach(category => {
         const tag = document.createElement('button');
@@ -111,6 +139,29 @@ function displayTags(categories) {
         tag.onclick = function() {
             if (filters.includes(category)) {
                 filters = filters.filter(filter => filter !== category);
+                tag.classList.remove('selected');
+            } else {
+                filters.push(category);
+                tag.classList.add('selected');
+            }
+            searchAdvance("category",category);
+            window.history.pushState(null, '', '?filters=' + filters.join(','));
+        };
+        container.appendChild(tag);
+    });
+}
+
+
+function displayRate(rates) {
+    const container = document.getElementById('tagRate');
+    container.innerHTML = '';
+    rates.forEach(rates => {
+        const tag = document.createElement('button');
+        tag.textContent = rates;
+        tag.className = 'tag';
+        tag.onclick = function() {
+            if (filters.includes(rate)) {
+                filters = filters.filter(filter => filter !== rate);
                 tag.classList.remove('selected');
             } else {
                 filters.push(category);
