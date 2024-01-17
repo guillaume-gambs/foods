@@ -104,6 +104,28 @@ function getEmoji(rating) {
     }
 }
 
+function rateHumanize(rating) {
+    switch (rating) {
+        case -2:
+            return 'Not set yet'; // Not Set Yet
+        case -1:
+            return 'No idea'; // Je ne sais pas
+        case 0:
+            return 'I hate this' // Fear
+        case 1:
+            return "I don't like it"; // Vomit
+        case 2:
+            return 'Meh I can Eat'; // Mitigé
+        case 3:
+            return 'I like it'; // Aime
+        case 4:
+            return 'I love it'; // Adore
+        case 5:
+            return "It 's my favorite food"; // Adore
+        default:
+            return '';
+    }
+}
 /**
  * Displays a list of foods in a table.
  *
@@ -171,6 +193,7 @@ function displayCategory(categories) {
 }
 
 
+
 /**
  * Displays the rates in the container element.
  * @param {number[]} rates - The rates to be displayed.
@@ -181,8 +204,8 @@ function displayRate(rates) {
     rates.sort((a, b) => a - b); // Sort the rates in ascending order
     rates.forEach(rate => {
         const tag_rate = document.createElement('button');
-        tag_rate.textContent = rate;
-        tag_rate.className = 'tagRate';
+        tag_rate.textContent = rateHumanize(rate);
+        tag_rate.className = 'tag';
         tag_rate.onclick = function () {
             if (rating_filters.includes(rate)) {
                 rating_filters = rating_filters.filter(filter => filter !== rate);
