@@ -32,7 +32,7 @@
 }
 
 table {
-    width: 100%;
+    width: 95%;
     border-collapse: collapse;
 }
 
@@ -41,10 +41,41 @@ table, th, td {
     padding: 8px;
 }
 
+/*
+Dans ce code, tr:nth-child(even) est un sélecteur CSS qui cible chaque deuxième élément tr (ligne de tableau).
+nth-child(even) est une pseudo-classe qui sélectionne les éléments en fonction de leur position dans un groupe d'éléments frères.
+even signifie que tous les éléments à des positions paires (2, 4, 6, etc.) seront sélectionnés.
+
+background-color: #f2f2f2; est une déclaration CSS qui définit la couleur d'arrière-plan des éléments sélectionnés.
+#f2f2f2 est une couleur gris clair.
+
+Ensemble, ce code donne un effet de zébrure aux lignes du tableau,
+où chaque deuxième ligne a un fond gris clair.
+Cela peut améliorer la lisibilité d'un tableau en facilitant la distinction entre les lignes adjacentes.
+
+C'est desactivé car je prefere que tout soit de la meme couleur
+*/
+/*
 tr:nth-child(even) {
     background-color: #f2f2f2;
 }
+*/
 
+
+/*
+Dans ce code, tr:hover est un sélecteur CSS qui cible les éléments tr (lignes de tableau)
+lorsqu'ils sont survolés par le curseur de la souris.
+:hover est une pseudo-classe qui sélectionne un élément lorsque l'utilisateur pointe dessus
+avec un dispositif de pointage, généralement la souris.
+
+background-color: #ddd; est une déclaration CSS qui définit la couleur d'arrière-plan
+des éléments sélectionnés. #ddd est une couleur gris clair.
+
+Ensemble, ce code change la couleur d'arrière-plan d'une ligne de tableau en gris clair
+lorsqu'elle est survolée par le curseur de la souris.
+Cela peut améliorer l'expérience utilisateur en fournissant un feedback visuel
+lorsque l'utilisateur survole une ligne de tableau.
+*/
 tr:hover {
     background-color: #ddd;
 }
