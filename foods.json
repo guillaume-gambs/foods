@@ -307,7 +307,7 @@
     {"name": "Persil", "category": "Épices et condiments", "rating": 3},
     {"name": "Curry", "category": "Épices et condiments", "rating": 4},
     {"name": "Curry vert", "category": "Épices et condiments", "rating": 4},
-    {"name": "Curry jaune", "category": "Épices et condiments", "rating": 4}
+    {"name": "Curry jaune", "category": "Épices et condiments", "rating": 4},
     {"name": "Curry rouge", "category": "Épices et condiments", "rating": 4},
     {"name": "Garam masala", "category": "Épices et condiments", "rating": -2},
     {"name": "Harissa", "category": "Épices et condiments", "rating": 4},
@@ -346,12 +346,11 @@
     {"name": "Bière neipa", "category": "Boissons", "rating": 5},
     {"name": "Bière Apa", "category": "Boissons", "rating": 5},
     {"name": "Bière pale ale", "category": "Boissons", "rating": 4},
-    {"name": "Bière lager", "category": "Boissons", "rating": 4}, // basse fermentation
+    {"name": "Bière lager", "category": "Boissons", "rating": 4},
     {"name": "Bière pils", "category": "Boissons", "rating": 4},
     {"name": "Bière triple", "category": "Boissons", "rating": 4},
     {"name": "Bière d'abbaye", "category": "Boissons", "rating": 4},
     {"name": "Bière sour", "category": "Boissons", "rating": 3},
-    // {"name": "Cocktail", "category": "Boissons", "rating": -2},
     {"name": "Lait d'amande", "category": "Boissons", "rating": 3},
     {"name": "Lait de coco", "category": "Boissons", "rating": 2},
     {"name": "Eau pétillante", "category": "Boissons", "rating": 2},
