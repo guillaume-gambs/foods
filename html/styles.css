@@ -138,3 +138,32 @@ th {
     background-color: #244a7c;
     color: white;
 }
+
+#tagRate {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+#tagRate .tag {
+    background-color: #f1f1f1;
+    border: none;
+    color: black;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+#tagRate .tag:hover {
+    background-color: #3e8e41;
+    color: white;
+}
+
+#tagRate .tag.selected {
+    background-color: #244a7c;
+    color: white;
+}
