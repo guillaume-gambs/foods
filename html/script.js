@@ -1,6 +1,8 @@
 
 let foods = [];
 let filters = [];
+category_filters = [];
+rating_filters = [];
 
 fetch('foods.json')
     .then(response => response.json())
@@ -24,15 +26,22 @@ function search() {
         const foodRating = food.rating;
         const foodName = removeAccents(food.name.toLowerCase());
         return (
-            (filters.length === 0 || filters.includes(foodCategory)) &&
-            (foodCategory.includes(input) || foodRating.toString().includes(input) || foodName.includes(input))
+            (
+            filters.length === 0 
+            || filters.includes(foodCategory)
+            ) 
+            && (
+                foodCategory.includes(input) 
+                || foodRating.toString().includes(input) 
+                || foodName.includes(input)
+                )
         );
     });
     displayFoods(filteredFoods);
 }
 
 function searchAdvance(column, input) {
-    input = removeAccents(input.toLowerCase());
+    // input = removeAccents(input.toLowerCase());
     const filteredFoods = foods.filter(food => {
         let value;
         switch (column) {
@@ -53,14 +62,19 @@ function searchAdvance(column, input) {
     displayFoods(filteredFoods);
 }
 
-window.onload = function() {
+window.onload = function () {
+    /**
+     * URLSearchParams object representing the query parameters of the current window location.
+     * @type {URLSearchParams}
+     */
     const urlParams = new URLSearchParams(window.location.search);
-    filters = urlParams.get('filters') ? urlParams.get('filters').split(',') : [];
+    category_filters = urlParams.get('filtersCategory') ? urlParams.get('filtersCategory').split(',') : [];
+    rating_filters = urlParams.get('filtersRate') ? urlParams.get('filtersRate').split(',') : [];
     // Mettez à jour l'interface utilisateur tag.classList selon les filtres
     const tags = document.getElementsByClassName('tag');
     for (let i = 0; i < tags.length; i++) {
         const tag = tags[i];
-        if (filters.includes(tag.textContent)) {
+        if (category_filters.includes(tag.textContent)) {
             tag.classList.add('selected');
         }
     }
@@ -70,9 +84,9 @@ window.onload = function() {
 function getEmoji(rating) {
     switch (rating) {
         case -2:
-            return '???' ; // Not Set Yet
+            return '???'; // Not Set Yet
         case -1:
-            return '??' ; // Je ne sais pas
+            return '??'; // Je ne sais pas
         case 0:
             return "&#128561;"; // Fear
         case 1:
@@ -90,6 +104,11 @@ function getEmoji(rating) {
     }
 }
 
+/**
+ * Displays a list of foods in a table.
+ *
+ * @param {Array} foods - The list of foods to display.
+ */
 function displayFoods(foods) {
     const table = document.getElementById('foodTable');
     table.innerHTML = '';
@@ -133,43 +152,49 @@ function displayCategory(categories) {
     const container = document.getElementById('tagCategory');
     container.innerHTML = '';
     categories.forEach(category => {
-        const tag = document.createElement('button');
-        tag.textContent = category;
-        tag.className = 'tag';
-        tag.onclick = function() {
-            if (filters.includes(category)) {
-                filters = filters.filter(filter => filter !== category);
-                tag.classList.remove('selected');
+        const tag_category = document.createElement('button');
+        tag_category.textContent = category;
+        tag_category.className = 'tag';
+        tag_category.onclick = function () {
+            if (category_filters.includes(category)) {
+                category_filters = category_filters.filter(filter => filter !== category);
+                tag_category.classList.remove('selected');
             } else {
-                filters.push(category);
-                tag.classList.add('selected');
+                category_filters.push(category);
+                tag_category.classList.add('selected');
             }
-            searchAdvance("category",category);
-            window.history.pushState(null, '', '?filters=' + filters.join(','));
+            searchAdvance("category", category);
+            window.history.pushState(null, '', '?filtersCategory=' + category_filters.join(','));
         };
-        container.appendChild(tag);
+        container.appendChild(tag_category);
     });
 }
 
 
+/**
+ * Displays the rates in the container element.
+ * @param {number[]} rates - The rates to be displayed.
+ */
 function displayRate(rates) {
     const container = document.getElementById('tagRate');
     container.innerHTML = '';
-    rates.forEach(rates => {
-        const tag = document.createElement('button');
-        tag.textContent = rates;
-        tag.className = 'tag';
-        tag.onclick = function() {
-            if (filters.includes(rate)) {
-                filters = filters.filter(filter => filter !== rate);
-                tag.classList.remove('selected');
+    rates.sort((a, b) => a - b); // Sort the rates in ascending order
+    rates.forEach(rate => {
+        const tag_rate = document.createElement('button');
+        tag_rate.textContent = rate;
+        tag_rate.className = 'tagRate';
+        tag_rate.onclick = function () {
+            if (rating_filters.includes(rate)) {
+                rating_filters = rating_filters.filter(filter => filter !== rate);
+                tag_rate.classList.remove('selected');
             } else {
-                filters.push(category);
-                tag.classList.add('selected');
+                rating_filters.push(rate);
+                tag_rate.classList.add('selected');
             }
-            search();
-            window.history.pushState(null, '', '?filters=' + filters.join(','));
+            // search();
+            searchAdvance("rating", rate);
+            window.history.pushState(null, '', '?filtersRate=' + rating_filters.join(','));
         };
-        container.appendChild(tag);
+        container.appendChild(tag_rate);
     });
 }
