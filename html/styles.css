@@ -79,13 +79,13 @@ th {
     background-color: #ccffcc; /* Green */
 }
 
-#tagContainer {
+#tagCategory {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 20px;
 }
 
-#tagContainer .tag {
+#tagCategory .tag {
     background-color: #f1f1f1;
     border: none;
     color: black;
@@ -98,12 +98,12 @@ th {
     transition-duration: 0.4s;
 }
 
-#tagContainer .tag:hover {
+#tagCategory .tag:hover {
     background-color: #3e8e41;
     color: white;
 }
 
-#tagContainer .tag.selected {
+#tagCategory .tag.selected {
     background-color: #244a7c;
     color: white;
 }
