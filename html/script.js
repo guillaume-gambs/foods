@@ -1,6 +1,5 @@
 const FoodApp = {
     foods: [],
-    filters: [],
     category_filters: [],
     rating_filters: [],
 
@@ -19,7 +18,7 @@ const FoodApp = {
                 const rates = [...new Set(this.foods.map(food => food.rating))];
                 this.displayCategory(categories);
                 this.displayRate(rates);
-                this.displayFoods(this.foods);
+                this.search();
             });
     },
 
@@ -35,40 +34,14 @@ const FoodApp = {
         const input = this.removeAccents(document.getElementById('searchInput').value.toLowerCase());
         const filteredFoods = this.foods.filter(food => {
             const foodCategory = this.removeAccents(food.category.toLowerCase());
-            const foodRating = food.rating;
+            const foodRating = food.rating.toString();
             const foodName = this.removeAccents(food.name.toLowerCase());
-            return (
-                (
-                this.filters.length === 0
-                || this.filters.includes(foodCategory)
-                )
-                && (
-                    foodCategory.includes(input)
-                    || foodRating.toString().includes(input)
-                    || foodName.includes(input)
-                    )
-            );
-        });
-        this.displayFoods(filteredFoods);
-    },
 
-    searchAdvance(column, input) {
-        const filteredFoods = this.foods.filter(food => {
-            let value;
-            switch (column) {
-                case 'name':
-                    value = this.removeAccents(food.name.toLowerCase());
-                    break;
-                case 'rating':
-                    value = food.rating.toString();
-                    break;
-                case 'category':
-                    value = this.removeAccents(food.category.toLowerCase());
-                    break;
-                default:
-                    return false;
-            }
-            return value.includes(input);
+            const matchesCategoryFilter = this.category_filters.length === 0 || this.category_filters.includes(food.category);
+            const matchesRatingFilter = this.rating_filters.length === 0 || this.rating_filters.includes(food.rating.toString());
+            const matchesSearch = foodCategory.includes(input) || foodRating.includes(input) || foodName.includes(input);
+
+            return matchesCategoryFilter && matchesRatingFilter && matchesSearch;
         });
         this.displayFoods(filteredFoods);
     },
@@ -77,14 +50,31 @@ const FoodApp = {
         const urlParams = new URLSearchParams(window.location.search);
         this.category_filters = urlParams.get('filtersCategory') ? urlParams.get('filtersCategory').split(',') : [];
         this.rating_filters = urlParams.get('filtersRate') ? urlParams.get('filtersRate').split(',') : [];
-        const tags = document.getElementsByClassName('tag');
-        for (let i = 0; i < tags.length; i++) {
-            const tag = tags[i];
+        this.updateCategoryTagSelection();
+        this.updateRatingTagSelection();
+        this.search();
+    },
+
+    updateCategoryTagSelection() {
+        const categoryTags = document.querySelectorAll('#tagCategory .tag');
+        categoryTags.forEach(tag => {
             if (this.category_filters.includes(tag.textContent)) {
                 tag.classList.add('selected');
+            } else {
+                tag.classList.remove('selected');
             }
-        }
-        this.search();
+        });
+    },
+
+    updateRatingTagSelection() {
+        const ratingTags = document.querySelectorAll('#tagRate .tag');
+        ratingTags.forEach(tag => {
+            if (this.rating_filters.includes(tag.dataset.rating)) {
+                tag.classList.add('selected');
+            } else {
+                tag.classList.remove('selected');
+            }
+        });
     },
 
     getEmoji(rating) {
@@ -170,12 +160,15 @@ const FoodApp = {
         });
     },
 
-    createFilterButton(container, text, isActive, onClick) {
+    createFilterButton(container, text, isActive, onClick, dataAttr) {
         const button = document.createElement('button');
         button.textContent = text;
         button.className = 'tag';
         if (isActive) {
             button.classList.add('selected');
+        }
+        if (dataAttr) {
+            button.dataset.rating = dataAttr;
         }
         button.onclick = onClick;
         container.appendChild(button);
@@ -191,8 +184,9 @@ const FoodApp = {
                 } else {
                     this.category_filters.push(category);
                 }
-                this.searchAdvance("category", category);
-                window.history.pushState(null, '', '?filtersCategory=' + this.category_filters.join(','));
+                this.updateURLParams();
+                this.updateCategoryTagSelection();
+                this.search();
             });
         });
     },
@@ -202,16 +196,29 @@ const FoodApp = {
         container.innerHTML = '';
         rates.sort((a, b) => a - b);
         rates.forEach(rate => {
-            this.createFilterButton(container, this.rateHumanize(rate), this.rating_filters.includes(rate), () => {
-                if (this.rating_filters.includes(rate)) {
-                    this.rating_filters = this.rating_filters.filter(filter => filter !== rate);
+            const rateStr = rate.toString();
+            this.createFilterButton(container, this.rateHumanize(rate), this.rating_filters.includes(rateStr), () => {
+                if (this.rating_filters.includes(rateStr)) {
+                    this.rating_filters = this.rating_filters.filter(filter => filter !== rateStr);
                 } else {
-                    this.rating_filters.push(rate);
+                    this.rating_filters.push(rateStr);
                 }
-                this.searchAdvance("rating", rate);
-                window.history.pushState(null, '', '?filtersRate=' + this.rating_filters.join(','));
-            });
+                this.updateURLParams();
+                this.updateRatingTagSelection();
+                this.search();
+            }, rateStr);
         });
+    },
+
+    updateURLParams() {
+        const urlParams = new URLSearchParams();
+        if (this.category_filters.length > 0) {
+            urlParams.set('filtersCategory', this.category_filters.join(','));
+        }
+        if (this.rating_filters.length > 0) {
+            urlParams.set('filtersRate', this.rating_filters.join(','));
+        }
+        window.history.pushState(null, '', '?' + urlParams.toString());
     }
 };
 
