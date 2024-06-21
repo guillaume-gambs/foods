@@ -1,223 +1,198 @@
-
-let foods = [];
-let filters = [];
-category_filters = [];
-rating_filters = [];
-
-fetch('foods.json')
-    .then(response => response.json())
-    .then(data => {
-        foods = data;
-        const categories = [...new Set(foods.map(food => food.category))];
-        const rates = [...new Set(foods.map(food => food.rating))];
-        displayCategory(categories);
-        displayRate(rates);
-        displayFoods(foods);
-    });
-
-function removeAccents(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
-function search() {
-    const input = removeAccents(document.getElementById('searchInput').value.toLowerCase());
-    const filteredFoods = foods.filter(food => {
-        const foodCategory = removeAccents(food.category.toLowerCase());
-        const foodRating = food.rating;
-        const foodName = removeAccents(food.name.toLowerCase());
-        return (
-            (
-            filters.length === 0 
-            || filters.includes(foodCategory)
-            ) 
-            && (
-                foodCategory.includes(input) 
-                || foodRating.toString().includes(input) 
-                || foodName.includes(input)
-                )
-        );
-    });
-    displayFoods(filteredFoods);
-}
-
-function searchAdvance(column, input) {
-    // input = removeAccents(input.toLowerCase());
-    const filteredFoods = foods.filter(food => {
-        let value;
-        switch (column) {
-            case 'name':
-                value = removeAccents(food.name.toLowerCase());
-                break;
-            case 'rating':
-                value = food.rating.toString();
-                break;
-            case 'category':
-                value = removeAccents(food.category.toLowerCase());
-                break;
-            default:
-                return false;
-        }
-        return value.includes(input);
-    });
-    displayFoods(filteredFoods);
-}
-
-window.onload = function () {
-    /**
-     * URLSearchParams object representing the query parameters of the current window location.
-     * @type {URLSearchParams}
-     */
-    const urlParams = new URLSearchParams(window.location.search);
-    category_filters = urlParams.get('filtersCategory') ? urlParams.get('filtersCategory').split(',') : [];
-    rating_filters = urlParams.get('filtersRate') ? urlParams.get('filtersRate').split(',') : [];
-    // Mettez à jour l'interface utilisateur tag.classList selon les filtres
-    const tags = document.getElementsByClassName('tag');
-    for (let i = 0; i < tags.length; i++) {
-        const tag = tags[i];
-        if (category_filters.includes(tag.textContent)) {
-            tag.classList.add('selected');
-        }
-    }
-    search();
+const emojiMappings = {
+    '-2': { emoji: '❓', humanized: 'Not set yet' },
+    '-1': { emoji: '&#x1F914;', humanized: 'No idea' },
+    '0': { emoji: '&#128561;', humanized: 'I hate this' },
+    '1': { emoji: '&#x1F92E;', humanized: "I don't like it" },
+    '2': { emoji: '&#x1F615;', humanized: 'Meh I can Eat' },
+    '3': { emoji: '&#x1F60A;', humanized: 'I like it' },
+    '4': { emoji: '&#x1F60D;', humanized: 'I love it' },
+    '5': { emoji: '&#x1F970;', humanized: "It's my favorite food" }
 };
 
-function getEmoji(rating) {
-    switch (rating) {
-        case -2:
-            return '???'; // Not Set Yet
-        case -1:
-            return '??'; // Je ne sais pas
-        case 0:
-            return "&#128561;"; // Fear
-        case 1:
-            return '&#x1F92E;'; // Vomit
-        case 2:
-            return '&#x1F615;'; // Mitigé
-        case 3:
-            return '&#x1F60A;'; // Aime
-        case 4:
-            return '&#x1F60D;'; // Adore
-        case 5:
-            return '&#x1F970;'; // Adore
-        default:
-            return '';
-    }
-}
+const FoodApp = {
+    foods: [],
+    category_filters: [],
+    rating_filters: [],
 
-function rateHumanize(rating) {
-    switch (rating) {
-        case -2:
-            return 'Not set yet'; // Not Set Yet
-        case -1:
-            return 'No idea'; // Je ne sais pas
-        case 0:
-            return 'I hate this' // Fear
-        case 1:
-            return "I don't like it"; // Vomit
-        case 2:
-            return 'Meh I can Eat'; // Mitigé
-        case 3:
-            return 'I like it'; // Aime
-        case 4:
-            return 'I love it'; // Adore
-        case 5:
-            return "It 's my favorite food"; // Adore
-        default:
-            return '';
-    }
-}
-/**
- * Displays a list of foods in a table.
- *
- * @param {Array} foods - The list of foods to display.
- */
-function displayFoods(foods) {
-    const table = document.getElementById('foodTable');
-    table.innerHTML = '';
+    init() {
+        this.fetchFoods();
+        this.setupEventListeners();
+        this.applyFiltersFromURL();
+    },
 
-    // Créer l'en-tête du tableau
-    const header = document.createElement('tr');
-    const emojiTh = document.createElement('th');
-    const categoryTh = document.createElement('th');
-    const nameTh = document.createElement('th');
+    fetchFoods() {
+        fetch('foods.json')
+            .then(response => response.json())
+            .then(data => {
+                this.foods = data;
+                const categories = [...new Set(this.foods.map(food => food.category))];
+                const rates = [...new Set(this.foods.map(food => food.rating))];
+                this.displayCategory(categories);
+                this.displayRate(rates);
+                this.search();
+            });
+    },
 
-    emojiTh.textContent = 'Emoji';
-    categoryTh.textContent = 'Category';
-    nameTh.textContent = 'Name';
+    setupEventListeners() {
+        document.getElementById('searchInput').addEventListener('input', () => this.search());
+    },
 
-    header.appendChild(emojiTh);
-    header.appendChild(categoryTh);
-    header.appendChild(nameTh);
-    table.appendChild(header);
+    removeAccents(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    },
 
-    foods.forEach(food => {
-        const tr = document.createElement('tr');
-        const emojiTd = document.createElement('td');
-        const categoryTd = document.createElement('td');
-        const nameTd = document.createElement('td');
+    search() {
+        const input = this.removeAccents(document.getElementById('searchInput').value.toLowerCase());
+        const filteredFoods = this.foods.filter(food => {
+            const foodCategory = this.removeAccents(food.category.toLowerCase());
+            const foodRating = food.rating.toString();
+            const foodName = this.removeAccents(food.name.toLowerCase());
 
-        const emoji = getEmoji(food.rating);
-        emojiTd.innerHTML = emoji;
-        categoryTd.textContent = food.category;
-        nameTd.textContent = food.name;
+            const matchesCategoryFilter = this.category_filters.length === 0 || this.category_filters.includes(food.category);
+            const matchesRatingFilter = this.rating_filters.length === 0 || this.rating_filters.includes(food.rating.toString());
+            const matchesSearch = foodCategory.includes(input) || foodRating.includes(input) || foodName.includes(input);
 
-        tr.appendChild(emojiTd);
-        tr.appendChild(categoryTd);
-        tr.appendChild(nameTd);
-        tr.className = `rating-${food.rating}`;
+            return matchesCategoryFilter && matchesRatingFilter && matchesSearch;
+        });
+        this.displayFoods(filteredFoods);
+    },
 
-        table.appendChild(tr);
-    });
-}
+    applyFiltersFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        this.category_filters = urlParams.get('filtersCategory') ? urlParams.get('filtersCategory').split(',') : [];
+        this.rating_filters = urlParams.get('filtersRate') ? urlParams.get('filtersRate').split(',') : [];
+        this.updateCategoryTagSelection();
+        this.updateRatingTagSelection();
+        this.search();
+    },
 
-function displayCategory(categories) {
-    const container = document.getElementById('tagCategory');
-    container.innerHTML = '';
-    categories.forEach(category => {
-        const tag_category = document.createElement('button');
-        tag_category.textContent = category;
-        tag_category.className = 'tag';
-        tag_category.onclick = function () {
-            if (category_filters.includes(category)) {
-                category_filters = category_filters.filter(filter => filter !== category);
-                tag_category.classList.remove('selected');
+    updateCategoryTagSelection() {
+        const categoryTags = document.querySelectorAll('#tagCategory .tag');
+        categoryTags.forEach(tag => {
+            if (this.category_filters.includes(tag.textContent)) {
+                tag.classList.add('selected');
             } else {
-                category_filters.push(category);
-                tag_category.classList.add('selected');
+                tag.classList.remove('selected');
             }
-            searchAdvance("category", category);
-            window.history.pushState(null, '', '?filtersCategory=' + category_filters.join(','));
-        };
-        container.appendChild(tag_category);
-    });
-}
+        });
+    },
 
-
-
-/**
- * Displays the rates in the container element.
- * @param {number[]} rates - The rates to be displayed.
- */
-function displayRate(rates) {
-    const container = document.getElementById('tagRate');
-    container.innerHTML = '';
-    rates.sort((a, b) => a - b); // Sort the rates in ascending order
-    rates.forEach(rate => {
-        const tag_rate = document.createElement('button');
-        tag_rate.textContent = rateHumanize(rate);
-        tag_rate.className = 'tag';
-        tag_rate.onclick = function () {
-            if (rating_filters.includes(rate)) {
-                rating_filters = rating_filters.filter(filter => filter !== rate);
-                tag_rate.classList.remove('selected');
+    updateRatingTagSelection() {
+        const ratingTags = document.querySelectorAll('#tagRate .tag');
+        ratingTags.forEach(tag => {
+            if (this.rating_filters.includes(tag.dataset.rating)) {
+                tag.classList.add('selected');
             } else {
-                rating_filters.push(rate);
-                tag_rate.classList.add('selected');
+                tag.classList.remove('selected');
             }
-            // search();
-            searchAdvance("rating", rate);
-            window.history.pushState(null, '', '?filtersRate=' + rating_filters.join(','));
-        };
-        container.appendChild(tag_rate);
-    });
-}
+        });
+    },
+
+    getEmoji(rating) {
+        return emojiMappings[rating.toString()] ? emojiMappings[rating.toString()].emoji : '';
+    },
+
+    rateHumanize(rating) {
+        return emojiMappings[rating.toString()] ? emojiMappings[rating.toString()].humanized : '';
+    },
+
+    displayFoods(foods) {
+        const table = document.getElementById('foodTable');
+        table.innerHTML = '';
+        const header = document.createElement('tr');
+        const emojiTh = document.createElement('th');
+        const categoryTh = document.createElement('th');
+        const nameTh = document.createElement('th');
+
+        emojiTh.textContent = 'Emoji';
+        categoryTh.textContent = 'Category';
+        nameTh.textContent = 'Name';
+
+        header.appendChild(emojiTh);
+        header.appendChild(categoryTh);
+        header.appendChild(nameTh);
+        table.appendChild(header);
+
+        foods.forEach(food => {
+            const tr = document.createElement('tr');
+            const emojiTd = document.createElement('td');
+            const categoryTd = document.createElement('td');
+            const nameTd = document.createElement('td');
+
+            const emoji = this.getEmoji(food.rating);
+            emojiTd.innerHTML = emoji;
+            categoryTd.textContent = food.category;
+            nameTd.textContent = food.name;
+
+            tr.appendChild(emojiTd);
+            tr.appendChild(categoryTd);
+            tr.appendChild(nameTd);
+            tr.className = `rating-${food.rating}`;
+
+            table.appendChild(tr);
+        });
+    },
+
+    createFilterButton(container, text, isActive, onClick, dataAttr) {
+        const button = document.createElement('button');
+        button.textContent = text;
+        button.className = 'tag';
+        if (isActive) {
+            button.classList.add('selected');
+        }
+        if (dataAttr) {
+            button.dataset.rating = dataAttr;
+        }
+        button.onclick = onClick;
+        container.appendChild(button);
+    },
+
+    displayCategory(categories) {
+        const container = document.getElementById('tagCategory');
+        container.innerHTML = '';
+        categories.forEach(category => {
+            this.createFilterButton(container, category, this.category_filters.includes(category), () => {
+                if (this.category_filters.includes(category)) {
+                    this.category_filters = this.category_filters.filter(filter => filter !== category);
+                } else {
+                    this.category_filters.push(category);
+                }
+                this.updateURLParams();
+                this.updateCategoryTagSelection();
+                this.search();
+            });
+        });
+    },
+
+    displayRate(rates) {
+        const container = document.getElementById('tagRate');
+        container.innerHTML = '';
+        rates.sort((a, b) => a - b);
+        rates.forEach(rate => {
+            const rateStr = rate.toString();
+            this.createFilterButton(container, this.rateHumanize(rate), this.rating_filters.includes(rateStr), () => {
+                if (this.rating_filters.includes(rateStr)) {
+                    this.rating_filters = this.rating_filters.filter(filter => filter !== rateStr);
+                } else {
+                    this.rating_filters.push(rateStr);
+                }
+                this.updateURLParams();
+                this.updateRatingTagSelection();
+                this.search();
+            }, rateStr);
+        });
+    },
+
+    updateURLParams() {
+        const urlParams = new URLSearchParams();
+        if (this.category_filters.length > 0) {
+            urlParams.set('filtersCategory', this.category_filters.join(','));
+        }
+        if (this.rating_filters.length > 0) {
+            urlParams.set('filtersRate', this.rating_filters.join(','));
+        }
+        window.history.pushState(null, '', '?' + urlParams.toString());
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => FoodApp.init());
