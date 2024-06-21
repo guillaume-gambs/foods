@@ -1,3 +1,14 @@
+const emojiMappings = {
+    '-2': { emoji: '❓', humanized: 'Not set yet' },
+    '-1': { emoji: '&#x1F914;', humanized: 'No idea' },
+    '0': { emoji: '&#128561;', humanized: 'I hate this' },
+    '1': { emoji: '&#x1F92E;', humanized: "I don't like it" },
+    '2': { emoji: '&#x1F615;', humanized: 'Meh I can Eat' },
+    '3': { emoji: '&#x1F60A;', humanized: 'I like it' },
+    '4': { emoji: '&#x1F60D;', humanized: 'I love it' },
+    '5': { emoji: '&#x1F970;', humanized: "It's my favorite food" }
+};
+
 const FoodApp = {
     foods: [],
     category_filters: [],
@@ -78,49 +89,11 @@ const FoodApp = {
     },
 
     getEmoji(rating) {
-        switch (rating) {
-            case -2:
-                return '???';
-            case -1:
-                return '??';
-            case 0:
-                return "&#128561;";
-            case 1:
-                return '&#x1F92E;';
-            case 2:
-                return '&#x1F615;';
-            case 3:
-                return '&#x1F60A;';
-            case 4:
-                return '&#x1F60D;';
-            case 5:
-                return '&#x1F970;';
-            default:
-                return '';
-        }
+        return emojiMappings[rating.toString()] ? emojiMappings[rating.toString()].emoji : '';
     },
 
     rateHumanize(rating) {
-        switch (rating) {
-            case -2:
-                return 'Not set yet';
-            case -1:
-                return 'No idea';
-            case 0:
-                return 'I hate this';
-            case 1:
-                return "I don't like it";
-            case 2:
-                return 'Meh I can Eat';
-            case 3:
-                return 'I like it';
-            case 4:
-                return 'I love it';
-            case 5:
-                return "It's my favorite food";
-            default:
-                return '';
-        }
+        return emojiMappings[rating.toString()] ? emojiMappings[rating.toString()].humanized : '';
     },
 
     displayFoods(foods) {
