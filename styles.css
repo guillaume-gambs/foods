@@ -1,169 +1,467 @@
-#searchInput {
-    width: 95%;
-    padding: 12px 20px;
-    margin: 8px 0;
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    border: 5px solid #ccc;
-    border-radius: 40px;
 }
 
-#foodList {
-    list-style-type: none;
-    padding: 1;
-    width: 90%;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
 }
 
-#foodList button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+/* Mode Switcher */
+.mode-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.mode-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
     font-size: 16px;
-    transition-duration: 0.4s;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.mode-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.mode-btn.active {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Content Panels */
+.content-panel {
+    display: none;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.content-panel.active {
+    display: block;
+}
+
+/* Search Panel Styles */
+.search-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+}
+
+.filters {
+    margin-bottom: 30px;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group h3 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    background: #f5f5f5;
+    border: 2px solid transparent;
+    color: #666;
+    padding: 8px 16px;
+    border-radius: 20px;
     cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    user-select: none;
 }
 
-#foodList button:hover {
-    background-color: #45a049;
+.tag:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
 }
 
-table {
-    width: 95%;
+.tag.selected {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: #667eea;
+}
+
+/* Table Styles */
+.food-table {
+    width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
 }
 
-table, th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-/*
-Dans ce code, tr:nth-child(even) est un sélecteur CSS qui cible chaque deuxième élément tr (ligne de tableau).
-nth-child(even) est une pseudo-classe qui sélectionne les éléments en fonction de leur position dans un groupe d'éléments frères.
-even signifie que tous les éléments à des positions paires (2, 4, 6, etc.) seront sélectionnés.
-
-background-color: #f2f2f2; est une déclaration CSS qui définit la couleur d'arrière-plan des éléments sélectionnés.
-#f2f2f2 est une couleur gris clair.
-
-Ensemble, ce code donne un effet de zébrure aux lignes du tableau,
-où chaque deuxième ligne a un fond gris clair.
-Cela peut améliorer la lisibilité d'un tableau en facilitant la distinction entre les lignes adjacentes.
-
-C'est desactivé car je prefere que tout soit de la meme couleur
-*/
-/*
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-*/
-
-
-/*
-Dans ce code, tr:hover est un sélecteur CSS qui cible les éléments tr (lignes de tableau)
-lorsqu'ils sont survolés par le curseur de la souris.
-:hover est une pseudo-classe qui sélectionne un élément lorsque l'utilisateur pointe dessus
-avec un dispositif de pointage, généralement la souris.
-
-background-color: #ddd; est une déclaration CSS qui définit la couleur d'arrière-plan
-des éléments sélectionnés. #ddd est une couleur gris clair.
-
-Ensemble, ce code change la couleur d'arrière-plan d'une ligne de tableau en gris clair
-lorsqu'elle est survolée par le curseur de la souris.
-Cela peut améliorer l'expérience utilisateur en fournissant un feedback visuel
-lorsque l'utilisateur survole une ligne de tableau.
-*/
-tr:hover {
-    background-color: #ddd;
-}
-
-th {
-    padding-top: 12px;
-    padding-bottom: 12px;
+.food-table th {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 15px;
     text-align: left;
-    background-color: #4CAF50;
-    color: white;
-}
-.rating-0 {
-     background-color: #0000008d; /* Black */
-}
-.rating-1 {
-     background-color: #ffcccc; /* Red */
+    font-weight: 600;
 }
 
-.rating-2 {
-    background-color: #ffddcc; /* Orange */
+.food-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.rating-3 {
-    background-color: #ffffcc; /* Yellow */
+.food-table tr:hover {
+    background: rgba(102, 126, 234, 0.05);
 }
 
-.rating-4 {
-    background-color: #ddffcc; /* Light Green */
+.emoji-cell {
+    font-size: 1.5rem;
+    text-align: center;
+    width: 80px;
 }
 
-.rating-5 {
-    background-color: #ccffcc; /* Green */
+/* Rating Colors */
+.rating-empty { background: rgba(200, 200, 200, 0.2); }
+.rating-0 { background: rgba(139, 69, 19, 0.2); }
+.rating-1 { background: rgba(255, 87, 34, 0.2); }
+.rating-2 { background: rgba(255, 193, 7, 0.2); }
+.rating-3 { background: rgba(76, 175, 80, 0.2); }
+.rating-4 { background: rgba(33, 150, 243, 0.2); }
+.rating-5 { background: rgba(156, 39, 176, 0.2); }
+
+/* Game Panel Styles */
+.game-container {
+    text-align: center;
 }
 
-#tagCategory {
+.game-stats {
     display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.game-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 20px;
+    padding: 40px;
+    margin: 30px 0;
+    color: white;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.food-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.food-category {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.choice-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
     flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.choice-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    min-width: 150px;
+    backdrop-filter: blur(10px);
+}
+
+.choice-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dislike-btn:hover {
+    background: rgba(244, 67, 54, 0.3);
+}
+
+.like-btn:hover {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+.result {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.result.correct {
+    background: rgba(76, 175, 80, 0.2);
+    color: #2e7d32;
+    border: 2px solid #4caf50;
+}
+
+.result.incorrect {
+    background: rgba(244, 67, 54, 0.2);
+    color: #c62828;
+    border: 2px solid #f44336;
+}
+
+.next-btn {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+}
+
+/* Suggest Panel Styles */
+.suggest-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.suggest-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.suggest-container p {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #666;
+}
+
+.suggest-form {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.form-group {
     margin-bottom: 20px;
 }
 
-#tagCategory .tag {
-    background-color: #f1f1f1;
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.suggest-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     border: none;
-    color: black;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 4px 2px;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition-duration: 0.4s;
+    transition: all 0.3s ease;
 }
 
-#tagCategory .tag:hover {
-    background-color: #3e8e41;
-    color: white;
+.suggest-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
-#tagCategory .tag.selected {
-    background-color: #244a7c;
-    color: white;
+.suggestions-list {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
 }
 
-#tagRate {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
+.suggestions-list h3 {
+    margin-bottom: 15px;
+    color: #333;
 }
 
-#tagRate .tag {
-    background-color: #f1f1f1;
-    border: none;
-    color: black;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 4px 2px;
-    cursor: pointer;
-    transition-duration: 0.4s;
+.suggestion-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 4px solid #667eea;
 }
 
-#tagRate .tag:hover {
-    background-color: #3e8e41;
-    color: white;
+.suggestion-item h4 {
+    margin-bottom: 5px;
+    color: #333;
 }
 
-#tagRate .tag.selected {
-    background-color: #244a7c;
-    color: white;
+.suggestion-item .category {
+    color: #667eea;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.suggestion-item .description {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.suggestion-item .date {
+    color: #999;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .choice-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .choice-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .food-name {
+        font-size: 2rem;
+    }
+
+    .game-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .mode-switcher {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mode-btn {
+        width: 200px;
+    }
 }

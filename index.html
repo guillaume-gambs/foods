@@ -1,17 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yum or Yuck: Guillaume's Food Radar</title>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Language" content="fr">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="tagCategory"></div>
-    <div id="tagRate"></div>
-    <input type="text" id="searchInput" onkeyup="search()" placeholder="Search rating for foods..">
-    <table id="foodTable"></table>
-    </ul>
+    <div class="container">
+        <div class="header">
+            <h1>🍽️ Yum or Yuck</h1>
+            <p>Découvrez les goûts alimentaires de Guillaume</p>
+        </div>
+
+        <div class="mode-switcher">
+            <button class="mode-btn active" data-mode="search">🔍 Explorer</button>
+            <button class="mode-btn" data-mode="game">🎮 Deviner</button>
+            <button class="mode-btn" data-mode="suggest">💡 Suggérer</button>
+        </div>
+
+        <!-- Search Panel -->
+        <div class="content-panel active" id="search-panel">
+            <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un aliment...">
+
+            <div class="filters">
+                <div class="filter-group">
+                    <h3>Catégories</h3>
+                    <div class="filter-tags" id="categoryFilters"></div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Évaluations</h3>
+                    <div class="filter-tags" id="ratingFilters"></div>
+                </div>
+            </div>
+
+            <table class="food-table" id="foodTable">
+                <thead>
+                    <tr>
+                        <th>Avis</th>
+                        <th>Catégorie</th>
+                        <th>Aliment</th>
+                    </tr>
+                </thead>
+                <tbody id="foodTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Game Panel -->
+        <div class="content-panel" id="game-panel">
+            <div class="game-container">
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="score">0</div>
+                        <div class="stat-label">Score</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="streak">0</div>
+                        <div class="stat-label">Série</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="total">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+
+                <div class="game-card" id="gameCard">
+                    <div class="food-name" id="currentFood">Cliquez sur "Nouvelle question" pour commencer</div>
+                    <div class="food-category" id="currentCategory"></div>
+
+                    <div class="choice-buttons" id="choiceButtons" style="display: none;">
+                        <button class="choice-btn dislike-btn" data-choice="dislike">😞 N'aime pas</button>
+                        <button class="choice-btn like-btn" data-choice="like">😊 Aime</button>
+                    </div>
+
+                    <div class="result" id="result" style="display: none;"></div>
+
+                    <button class="next-btn" id="nextBtn">Nouvelle question</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggest Panel -->
+        <div class="content-panel" id="suggest-panel">
+            <div class="suggest-container">
+                <h2>💡 Suggérer un nouvel aliment</h2>
+                <p>Vous connaissez un aliment qui n'est pas dans la liste ? Suggérez-le !</p>
+
+                <div class="suggest-form">
+                    <div class="form-group">
+                        <label for="suggestName">Nom de l'aliment :</label>
+                        <input type="text" id="suggestName" placeholder="Ex: Mangoustan, Durian..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="suggestCategory">Catégorie :</label>
+                        <select id="suggestCategory" required>
+                            <option value="">Choisir une catégorie</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="suggestDescription">Description (optionnel) :</label>
+                        <textarea id="suggestDescription" placeholder="Décrivez brièvement cet aliment..."></textarea>
+                    </div>
+
+                    <button class="suggest-btn" id="suggestBtn">📤 Envoyer la suggestion</button>
+                </div>
+
+                <div class="suggestions-list">
+                    <h3>📋 Suggestions récentes</h3>
+                    <div id="suggestionsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
