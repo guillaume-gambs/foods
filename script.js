@@ -20,6 +20,7 @@ class FoodApp {
         this.gameState = {
             score: 0,
             streak: 0,
+            bestStreak: this.loadBestStreak(),
             total: 0,
             currentFood: null,
             answered: false,
@@ -168,11 +169,13 @@ class FoodApp {
     }
 
     toggleRatingFilter(rating) {
-        const index = this.ratingFilters.indexOf(rating);
+        // Convertir le rating en string pour la comparaison cohérente
+        const ratingStr = String(rating);
+        const index = this.ratingFilters.indexOf(ratingStr);
         if (index > -1) {
             this.ratingFilters.splice(index, 1);
         } else {
-            this.ratingFilters.push(rating);
+            this.ratingFilters.push(ratingStr);
         }
         this.updateFilterDisplay();
         this.search();
@@ -186,7 +189,8 @@ class FoodApp {
 
         // Mettre à jour l'apparence des filtres de ratings
         document.querySelectorAll('#ratingFilters .tag').forEach(tag => {
-            tag.classList.toggle('selected', this.ratingFilters.includes(tag.dataset.rating));
+            const rating = tag.dataset.rating;
+            tag.classList.toggle('selected', this.ratingFilters.includes(rating));
         });
     }
 
@@ -197,7 +201,7 @@ class FoodApp {
             const matchesCategoryFilter = this.categoryFilters.length === 0 ||
                 this.categoryFilters.includes(food.category);
             const matchesRatingFilter = this.ratingFilters.length === 0 ||
-                this.ratingFilters.includes(food.rating);
+                this.ratingFilters.includes(String(food.rating));
             const matchesSearch = input === '' ||
                 this.removeAccents(food.name.toLowerCase()).includes(input) ||
                 this.removeAccents(food.category.toLowerCase()).includes(input);
@@ -288,11 +292,19 @@ class FoodApp {
         if (correct) {
             this.gameState.score++;
             this.gameState.streak++;
+
+            // Vérifier si c'est un nouveau record
+            if (this.gameState.streak > this.gameState.bestStreak) {
+                this.gameState.bestStreak = this.gameState.streak;
+                this.saveBestStreak();
+            }
+
             resultDiv.className = 'result correct';
             resultDiv.innerHTML = `
                 <div>🎉 Correct ! Guillaume ${emojiMappings[actualRating].humanized.toLowerCase()} ${this.gameState.currentFood.name}</div>
                 <div style="margin-top: 10px; font-size: 1rem;">Note exacte : ${emojiMappings[actualRating].emoji} ${emojiMappings[actualRating].humanized}</div>
                 <div style="margin-top: 10px; font-size: 1rem;">Série de ${this.gameState.streak} bonnes réponses !</div>
+                ${this.gameState.streak === this.gameState.bestStreak && this.gameState.streak > 1 ? '<div style="margin-top: 10px; font-size: 1rem; color: #FFD700;">🏆 Nouveau record !</div>' : ''}
             `;
         } else {
             this.gameState.streak = 0;
@@ -314,6 +326,7 @@ class FoodApp {
     updateGameStats() {
         document.getElementById('score').textContent = this.gameState.score;
         document.getElementById('streak').textContent = this.gameState.streak;
+        document.getElementById('bestStreak').textContent = this.gameState.bestStreak;
         document.getElementById('total').textContent = this.gameState.total;
     }
 
@@ -403,6 +416,24 @@ class FoodApp {
             localStorage.setItem('food-suggestions', JSON.stringify(this.suggestions));
         } catch (error) {
             console.error('Erreur lors de la sauvegarde des suggestions:', error);
+        }
+    }
+
+    loadBestStreak() {
+        try {
+            const saved = localStorage.getItem('best-streak');
+            return saved ? parseInt(saved, 10) : 0;
+        } catch (error) {
+            console.error('Erreur lors du chargement du meilleur score:', error);
+            return 0;
+        }
+    }
+
+    saveBestStreak() {
+        try {
+            localStorage.setItem('best-streak', this.gameState.bestStreak.toString());
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde du meilleur score:', error);
         }
     }
 }
