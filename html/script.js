@@ -168,11 +168,13 @@ class FoodApp {
     }
 
     toggleRatingFilter(rating) {
-        const index = this.ratingFilters.indexOf(rating);
+        // Convertir le rating en string pour la comparaison cohérente
+        const ratingStr = String(rating);
+        const index = this.ratingFilters.indexOf(ratingStr);
         if (index > -1) {
             this.ratingFilters.splice(index, 1);
         } else {
-            this.ratingFilters.push(rating);
+            this.ratingFilters.push(ratingStr);
         }
         this.updateFilterDisplay();
         this.search();
@@ -186,7 +188,8 @@ class FoodApp {
 
         // Mettre à jour l'apparence des filtres de ratings
         document.querySelectorAll('#ratingFilters .tag').forEach(tag => {
-            tag.classList.toggle('selected', this.ratingFilters.includes(tag.dataset.rating));
+            const rating = tag.dataset.rating;
+            tag.classList.toggle('selected', this.ratingFilters.includes(rating));
         });
     }
 
@@ -197,7 +200,7 @@ class FoodApp {
             const matchesCategoryFilter = this.categoryFilters.length === 0 ||
                 this.categoryFilters.includes(food.category);
             const matchesRatingFilter = this.ratingFilters.length === 0 ||
-                this.ratingFilters.includes(food.rating);
+                this.ratingFilters.includes(String(food.rating));
             const matchesSearch = input === '' ||
                 this.removeAccents(food.name.toLowerCase()).includes(input) ||
                 this.removeAccents(food.category.toLowerCase()).includes(input);
